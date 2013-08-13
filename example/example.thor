@@ -33,7 +33,7 @@ servers: {
 		data: { { "gamma" "delta" } { 1 2 } }
 	}
 
-	# Line breaks are OK when inside tables
+	# Line breaks are OK when inside lists
 	hosts: {
 		"alpha"
 		"omega"

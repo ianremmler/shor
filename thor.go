@@ -11,11 +11,11 @@ const grammar = `
 ignore: /^#.*\n/
 ignore: /^\s+/
 
-Doc => {type=Node} {field=Key} {/} <Table>
-Table => {field=Type} {table} {field=Kids} <<Node>>*
+Doc => {type=Node} {field=Key} {/} <List>
+List => {field=Type} {list} {field=Kids} <<Node>>*
 Node => {type=Node} {field=Key} <id> ':' <Value>
 Node => {type=Node} <Value>
-Value => {type=Node} '{' <Table> '}'
+Value => {type=Node} '{' <List> '}'
 Value => {type=Node} {field=Type} {num} {field=Val} <num>
 Value => {type=Node} {field=Type} {bool} {field=Val} <bool>
 Value => {type=Node} {field=Type} {str} {field=Val} <str>
@@ -49,7 +49,7 @@ type Node struct {
 func (n Node) String() string {
 	s := ""
 	switch n.Type {
-	case "table":
+	case "list":
 		for i := range n.Kids {
 			s += n.Kids[i].String()
 			if i < len(n.Kids)-1 {
@@ -61,7 +61,7 @@ func (n Node) String() string {
 	default:
 		s = n.Val
 	}
-	if n.Type == "table" && n.Key != "/" {
+	if n.Type == "list" && n.Key != "/" {
 		s = "{" + s + "}"
 	}
 	if n.Key != "" && n.Key != "/" {
