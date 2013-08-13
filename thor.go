@@ -8,7 +8,7 @@ import (
 )
 
 const grammar = `
-ignore: /^#.*\n/
+ignore: /^#.*/
 ignore: /^\s+/
 
 Doc => {type=Node} {field=Key} {/} <List>
