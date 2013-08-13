@@ -11,10 +11,11 @@ const grammar = `
 ignore: /^#.*\n/
 ignore: /^(?:[ \t\n])+/
 
-Doc => {type=Node} {field=Type} {root} {field=Kids} <<Node>>*
-Node => {type=Node} {field=Key} <id> ':' {field=.} <Value>
-Node => {type=Node} {field=.} <Value>
-Value => {type=Node} {field=Type} {table} '{' {field=Kids} <<Node>>* '}'
+Doc => {type=Node} {field=Key} {/} <Table>
+Table => {field=Type} {table} {field=Kids} <<Node>>*
+Node => {type=Node} {field=Key} <id> ':' <Value>
+Node => {type=Node} <Value>
+Value => {type=Node} '{' <Table> '}'
 Value => {type=Node} {field=Type} {num} {field=Val} <num>
 Value => {type=Node} {field=Type} {bool} {field=Val} <bool>
 Value => {type=Node} {field=Type} {str} {field=Val} <str>
@@ -48,7 +49,7 @@ type Node struct {
 func (n Node) String() string {
 	s := ""
 	switch n.Type {
-	case "root", "table":
+	case "table":
 		for i := range n.Kids {
 			s += n.Kids[i].String()
 			if i < len(n.Kids)-1 {
@@ -60,10 +61,10 @@ func (n Node) String() string {
 	default:
 		s = n.Val
 	}
-	if n.Type == "table" {
+	if n.Type == "table" && n.Key != "/" {
 		s = "{" + s + "}"
 	}
-	if n.Key != "" {
+	if n.Key != "" && n.Key != "/" {
 		s = n.Key + ":" + s
 	}
 	return s
