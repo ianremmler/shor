@@ -33,7 +33,7 @@ A Unicode letter, possibly followed by Unicode letters, numbers, and underscores
   Double quotes in the string must be escaped with a backslash.
 * Number: Double precision floating point, without any of the Inf and NaN nonsense.
 
-**Lists**
+**List**
 
 A list is an container of 0 or more nodes.  The order of the nodes is
 preserved.  A list may contain multiple nodes with the same key.
