@@ -9,7 +9,7 @@ import (
 
 const grammar = `
 ignore: /^#.*\n/
-ignore: /^(?:[ \t\n])+/
+ignore: /^\s+/
 
 Doc => {type=Node} {field=Key} {/} <Table>
 Table => {field=Type} {table} {field=Kids} <<Node>>*
