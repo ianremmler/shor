@@ -44,6 +44,14 @@ type Node struct {
 	Val  string
 	Type string
 	Kids []Node
+	Parent *Node
+}
+
+func (n *Node) linkNodes(par *Node) {
+	n.Parent = par
+	for i := range n.Kids {
+		n.Kids[i].linkNodes(n)
+	}
 }
 
 func (n Node) String() string {
@@ -74,5 +82,9 @@ func Parse(in io.Reader) (*Node, error) {
 	dec := decFact.NewDecoder(in)
 	tree := &Node{}
 	err := dec.Decode(tree)
-	return tree, err
+	if err != nil {
+		return nil, err
+	}
+	tree.linkNodes(nil)
+	return tree, nil
 }
