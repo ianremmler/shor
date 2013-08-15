@@ -40,10 +40,10 @@ func init() {
 }
 
 type Node struct {
-	Key  string
-	Val  string
-	Type string
-	Kids []Node
+	Key    string
+	Val    string
+	Type   string
+	Kids   []Node
 	Parent *Node
 }
 
