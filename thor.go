@@ -11,14 +11,14 @@ const grammar = `
 ignore: /^#.*/
 ignore: /^\s+/
 
-Doc => {type=Node} {field=Key} {/} <List>
+Doc => {type=*Node} {field=Key} {/} <List>
 List => {field=Type} {list} {field=Kids} <<Node>>*
-Node => {type=Node} {field=Key} <id> ':' <Value>
-Node => {type=Node} <Value>
-Value => {type=Node} '{' <List> '}'
-Value => {type=Node} {field=Type} {num} {field=Val} <num>
-Value => {type=Node} {field=Type} {bool} {field=Val} <bool>
-Value => {type=Node} {field=Type} {str} {field=Val} <str>
+Node => {type=*Node} {field=Key} <id> ':' <Value>
+Node => <Value>
+Value => '{' <List> '}'
+Value => {field=Type} {num} {field=Val} <num>
+Value => {field=Type} {bool} {field=Val} <bool>
+Value => {field=Type} {str} {field=Val} <str>
 
 num = /([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)/
 bool = /(true|false)/
@@ -36,7 +36,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	decFact.RegisterType(Node{})
+	decFact.RegisterType(&Node{})
 }
 
 type Node struct {
@@ -54,7 +54,7 @@ func (n *Node) linkNodes(par *Node) {
 	}
 }
 
-func (n Node) String() string {
+func (n *Node) String() string {
 	s := ""
 	switch n.Type {
 	case "list":
