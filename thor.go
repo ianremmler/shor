@@ -43,7 +43,7 @@ type Node struct {
 	Key    string
 	Val    string
 	Type   string
-	Kids   []Node
+	Kids   []*Node
 	Parent *Node
 }
 
@@ -76,6 +76,10 @@ func (n *Node) String() string {
 		s = n.Key + ":" + s
 	}
 	return s
+}
+
+func (n *Node) Query() Query {
+	return Query{n}
 }
 
 func Parse(in io.Reader) (*Node, error) {
