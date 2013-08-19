@@ -1,10 +1,10 @@
-thor
+Shor
 ====
 
-Thor is a textual hierarchical ordered representation for data.
+Shor is a simple hierarchical ordered representation for data.
 
 I couldn't find a language that did what I wanted, so I made a new one.  Some of the
-features of thor include:
+features of shor include:
 
 * Humans and machines can read and write it
 * Easy to parse
@@ -41,11 +41,11 @@ preserved.  A list may contain multiple nodes with the same key.
 Document
 --------
 
-A thor document has a special top level list of nodes that constitute the
+A shor document has a special top level list of nodes that constitute the
 document.  The top level list is not surrounded by curly braces like other
 lists.
 
 Commands
 --------
 
-Currently the `thor` command only parses input and dumps it back out.
+Currently the `shor` command only parses input and dumps it back out.

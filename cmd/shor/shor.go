@@ -1,14 +1,14 @@
 package main
 
 import (
-	"github.com/ianremmler/thor"
+	"github.com/ianremmler/shor"
 
 	"fmt"
 	"os"
 )
 
 func main() {
-	tree, err := thor.Parse(os.Stdin)
+	tree, err := shor.Parse(os.Stdin)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)

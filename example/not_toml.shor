@@ -1,7 +1,7 @@
-# This is a thor document.  Boom.
+# This is a shor document.  Boom.
 # Based on the example at https://github.com/mojombo/toml
 
-title: "thor example"
+title: "shor example"
 
 owner: {
 	name: "Me Myself"
@@ -18,7 +18,7 @@ database: {
 }
 
 servers: {
-	# You can indent as you please. Tabs or spaces. thor don't care.
+	# You can indent as you please. Tabs or spaces. shor don't care.
 	alpha: {
 		ip: "10.0.0.1"
 		dc: "eqdc10"
