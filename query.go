@@ -25,12 +25,20 @@ func (q Query) KeyN(key string, n int) Query {
 	return q.KeyRange(key, n, n)
 }
 
-func (q Query) FirstKey(key string) Query {
+func (q Query) KeyFirst(key string) Query {
 	return q.KeyN(key, 0)
 }
 
-func (q Query) LastKey(key string) Query {
+func (q Query) KeyLast(key string) Query {
 	return q.KeyN(key, -1)
+}
+
+func (q Query) KeyFirstN(key string, n int) Query {
+	return q.KeyRange(key, 0, n-1)
+}
+
+func (q Query) KeyLastN(key string, n int) Query {
+	return q.KeyRange(key, -n, -1)
 }
 
 func (q Query) Range(start, end int) Query {
@@ -58,6 +66,14 @@ func (q Query) Last() Query {
 	return q.At(-1)
 }
 
+func (q Query) FirstN(n int) Query {
+	return q.Range(0, n-1)
+}
+
+func (q Query) LastN(n int) Query {
+	return q.Range(-n, -1)
+}
+
 func calcRange(start, end, max int) (int, int) {
 	if start < 0 {
 		start += max
@@ -77,4 +93,3 @@ func calcRange(start, end, max int) (int, int) {
 	}
 	return start, end
 }
-
