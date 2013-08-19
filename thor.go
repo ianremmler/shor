@@ -11,16 +11,16 @@ const grammar = `
 ignore: /^#.*/
 ignore: /^\s+/
 
-Doc => {type=*Node} {field=Key} {/} <List>
+Doc => {field=Key} {/} <List>
 List => {field=Type} {list} {field=Kids} <<Node>>*
-Node => {type=*Node} {field=Key} <id> ':' <Value>
+Node => {field=Key} <id> ':' <Value>
 Node => <Value>
 Value => '{' <List> '}'
 Value => {field=Type} {num} {field=Val} <num>
 Value => {field=Type} {bool} {field=Val} <bool>
 Value => {field=Type} {str} {field=Val} <str>
 
-num = /([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)/
+num = /([-+]?\d*\.?\d+([eE][-+]?\d+)?)/
 bool = /(true|false)/
 str = /"((?:[^"\\]|\\.)*)"/
 id = /([\pL][\pL\pN\-_]*)/
