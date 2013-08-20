@@ -84,12 +84,12 @@ func (n *Node) Format(depth int, indent string) string {
 		}
 		for i := range n.Kids {
 			s += n.Kids[i].Format(kidDepth, indent)
-			if i < len(n.Kids)-1 {
+			if isMultiline || i < len(n.Kids)-1 {
 				s += eltSep
 			}
 		}
 		if !isRoot {
-			s = "{" + listSep + s + listSep + ind + "}"
+			s = "{" + listSep + s + ind + "}"
 		}
 	case "str":
 		s = strconv.Quote(n.Val)
