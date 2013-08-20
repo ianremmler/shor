@@ -24,7 +24,7 @@ list or any of the basic value types.
 
 **Key**
 
-A Unicode letter, possibly followed by Unicode letters, numbers, and underscores
+A Unicode letter, possibly followed by Unicode letters, numbers, dashes, and underscores
 
 **Value**
 
@@ -48,4 +48,11 @@ lists.
 Commands
 --------
 
-Currently the `shor` command only parses input and dumps it back out.
+Currently the `shor` command parses input and dumps it back out.
+
+Examples
+--------
+
+See the example directory for some files translated to shor from other formats,
+and `example/query.go` which demonstrates how to use the library to parse a
+document and query the result.
