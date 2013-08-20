@@ -39,7 +39,6 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	decFact.RegisterType(&Node{})
 }
 
 // Node holds a shor node and its children.
