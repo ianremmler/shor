@@ -5,6 +5,7 @@ package shor
 import (
 	"io"
 	"strconv"
+	"strings"
 
 	"github.com/skelterjohn/gopp"
 )
@@ -58,27 +59,48 @@ func (n *Node) linkNodes(par *Node) {
 	}
 }
 
-// String returns a tree in shor format
+// String returns a tree in single-line format
 func (n *Node) String() string {
+	return n.Format(-1, "")
+}
+
+// Format returns a formatted string representation of a tree.
+// If depth is negative, single-line format is produced.
+func (n *Node) Format(depth int, indent string) string {
+	isRoot := (n.Key == "/")
+	isMultiline := (depth >= 0)
+	ind, keySep, eltSep, listSep := "", "", " ", ""
+	if isMultiline {
+		ind = strings.Repeat(indent, depth)
+		keySep, eltSep, listSep = " ", "\n", "\n"
+	}
+
 	s := ""
 	switch n.Type {
 	case "list":
+		kidDepth := depth
+		if !isRoot && isMultiline {
+			kidDepth++
+		}
 		for i := range n.Kids {
-			s += n.Kids[i].String()
+			s += n.Kids[i].Format(kidDepth, indent)
 			if i < len(n.Kids)-1 {
-				s += " "
+				s += eltSep
 			}
+		}
+		if !isRoot {
+			s = "{" + listSep + s + listSep + ind + "}"
 		}
 	case "str":
 		s = strconv.Quote(n.Val)
 	default:
 		s = n.Val
 	}
-	if n.Type == "list" && n.Key != "/" {
-		s = "{" + s + "}"
+	if n.Key != "" && !isRoot {
+		s = n.Key + ":" + keySep + s
 	}
-	if n.Key != "" && n.Key != "/" {
-		s = n.Key + ":" + s
+	if !isRoot {
+		s = ind + s
 	}
 	return s
 }
