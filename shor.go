@@ -1,3 +1,5 @@
+// Package shor implements parsing and querying of the shor language, a simple hierarchical
+// ordered representation for data.
 package shor
 
 import (
@@ -39,14 +41,16 @@ func init() {
 	decFact.RegisterType(&Node{})
 }
 
+// Node holds a shor node and its children.
 type Node struct {
-	Key    string
-	Val    string
-	Type   string
+	Key    string // id if keyed, empty if keyless, or "/" if root
+	Val    string // string representation of value, empty for list
+	Type   string // str, num, bool, or list
 	Kids   []*Node
-	Parent *Node
+	Parent *Node // nil if root node
 }
 
+// linkNodes updates parent links for entire tree.
 func (n *Node) linkNodes(par *Node) {
 	n.Parent = par
 	for i := range n.Kids {
@@ -54,6 +58,7 @@ func (n *Node) linkNodes(par *Node) {
 	}
 }
 
+// String returns a tree in shor format
 func (n *Node) String() string {
 	s := ""
 	switch n.Type {
@@ -78,10 +83,12 @@ func (n *Node) String() string {
 	return s
 }
 
+// Query returns a Query object populated with n
 func (n *Node) Query() Query {
 	return Query{n}
 }
 
+// Parse parses input and returns a tree of parsed shor nodes
 func Parse(in io.Reader) (*Node, error) {
 	dec := decFact.NewDecoder(in)
 	tree := &Node{}
