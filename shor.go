@@ -3,6 +3,7 @@
 package shor
 
 import (
+	"fmt"
 	"io"
 	"strconv"
 	"strings"
@@ -10,28 +11,32 @@ import (
 	"github.com/skelterjohn/gopp"
 )
 
-const grammar = `
+const (
+	Num = iota
+	Bool
+	Str
+	List
+)
+
+var decFact *gopp.DecoderFactory
+
+var grammar = fmt.Sprintf(`
 ignore: /^#.*/
 ignore: /^\s+/
 
 Doc => {field=Key} {/} <List>
-List => {field=Type} {list} {field=Kids} <<Node>>*
+List => {field=Type} {%d} {field=Kids} <<Node>>*
 Node => {field=Key} <id> ':' <Value>
 Node => <Value>
 Value => '{' <List> '}'
-Value => {field=Type} {num} {field=Val} <num>
-Value => {field=Type} {bool} {field=Val} <bool>
-Value => {field=Type} {str} {field=Val} <str>
+Value => {field=Type} {%d} {field=Val} <num>
+Value => {field=Type} {%d} {field=Val} <bool>
+Value => {field=Type} {%d} {field=Val} <str>
 
 num = /([-+]?\d*\.?\d+([eE][-+]?\d+)?)/
 bool = /(true|false)/
 str = /"((?:[^"\\]|\\.)*)"/
-id = /([\pL][\pL\pN\-_]*)/
-`
-
-var (
-	decFact *gopp.DecoderFactory
-)
+id = /([\pL][\pL\pN\-_]*)/`, List, Num, Bool, Str)
 
 func init() {
 	var err error
@@ -45,9 +50,9 @@ func init() {
 type Node struct {
 	Key    string // id if keyed, empty if keyless, or "/" if root
 	Val    string // string representation of value, empty for list
-	Type   string // str, num, bool, or list
+	Type   int    // str, num, bool, or list
+	Parent *Node  // nil if root node
 	Kids   []*Node
-	Parent *Node // nil if root node
 }
 
 // linkNodes updates parent links for entire tree.
@@ -104,7 +109,7 @@ func (n *Node) Format(depth int, indent string) string {
 
 	s := ""
 	switch n.Type {
-	case "list":
+	case List:
 		kidDepth := depth
 		if !isRoot && isMultiline {
 			kidDepth++
@@ -118,7 +123,7 @@ func (n *Node) Format(depth int, indent string) string {
 		if !isRoot {
 			s = "{" + listSep + s + ind + "}"
 		}
-	case "str":
+	case Str:
 		s = strconv.Quote(n.Val)
 	default:
 		s = n.Val
