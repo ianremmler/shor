@@ -58,7 +58,35 @@ func (n *Node) linkNodes(par *Node) {
 	}
 }
 
-// String returns a tree in single-line format
+// Append adds kid at the end of the node's list of children.
+func (n *Node) Append(kid *Node) {
+	n.Kids = append(n.Kids, kid)
+	kid.Parent = n
+}
+
+// Insert places kid in the node's list of children at the given position.
+func (n *Node) Insert(kid *Node, pos int) bool {
+	if pos < 0 || pos > len(n.Kids) {
+		return false
+	}
+	n.Kids = append(n.Kids[:pos], append([]*Node{kid}, n.Kids[pos:]...)...)
+	kid.Parent = n
+	return true
+}
+
+// Remove removes kide from the node's list of children.
+func (n *Node) Remove(kid *Node) bool {
+	for i, k := range n.Kids {
+		if k == kid {
+			k.Parent = nil
+			n.Kids = append(n.Kids[:i], n.Kids[i:]...)
+			return true
+		}
+	}
+	return false
+}
+
+// String returns a tree in single-line format.
 func (n *Node) String() string {
 	return n.Format(-1, "")
 }
@@ -104,12 +132,12 @@ func (n *Node) Format(depth int, indent string) string {
 	return s
 }
 
-// Query returns a Query object populated with n
+// Query returns a Query object populated with n.
 func (n *Node) Query() Query {
 	return Query{n}
 }
 
-// Parse parses input and returns a tree of parsed shor nodes
+// Parse parses input and returns a tree of parsed shor nodes.
 func Parse(in io.Reader) (*Node, error) {
 	dec := decFact.NewDecoder(in)
 	tree := &Node{}
