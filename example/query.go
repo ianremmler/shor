@@ -24,7 +24,7 @@ func main() {
 	fmt.Println(conf.Query().All("*").All("*").All(""))
 
 	fmt.Println("\nlast two include nodes under http")
-	fmt.Println(conf.Query().All("http").LastN("include",2))
+	fmt.Println(conf.Query().All("http").LastN("include", 2))
 
 	fmt.Println("\nsecond top level node")
 	fmt.Println(conf.Query().At("*", 1))
@@ -34,4 +34,22 @@ func main() {
 
 	fmt.Println("\nall nodes in first server node in mail")
 	fmt.Println(conf.Query().First("mail").First("server").All("*"))
+
+	// get and set some values
+
+	s, q := "", conf.Query().First("user")
+	if len(q) > 0 && q[0].Get(&s) {
+		fmt.Println("\nuser:", s)
+	}
+	n, q := 0.0, conf.Query().First("worker_processes")
+	if len(q) > 0 && q[0].Get(&n) {
+		fmt.Println("\nworker_processes:", n)
+	}
+	b, q := false, conf.Query().First("http").First("gzip")
+	if len(q) > 0 && q[0].Get(&b) {
+		fmt.Println("\ngzip:", b)
+		q[0].Set(!b)
+		q[0].Get(&b)
+		fmt.Println("gzip set to opposite:", b)
+	}
 }

@@ -63,6 +63,51 @@ func (n *Node) linkNodes(par *Node) {
 	}
 }
 
+// Get provides the typed value represented by the node.
+func (n *Node) Get(val interface{}) bool {
+	switch n.Type {
+	case Num:
+		if p, ok := val.(*float64); ok {
+			if v, err := strconv.ParseFloat(n.Val, 64); err == nil {
+				*p = v
+				return true
+			}
+		}
+	case Bool:
+		if p, ok := val.(*bool); ok {
+			if v, err := strconv.ParseBool(n.Val); err == nil {
+				*p = v
+				return true
+			}
+		}
+	case Str:
+		if p, ok := val.(*string); ok {
+			*p = n.Val
+			return true
+		}
+	}
+	return false
+}
+
+// Set updates a node with a new value.
+func (n *Node) Set(val interface{}) bool {
+	switch val.(type) {
+	case float32, float64, int, int8, int16, int32, int64,
+		uint, uint8, uint16, uint32, uint64, uintptr:
+
+		n.Type = Num
+	case bool:
+		n.Type = Bool
+	case string:
+		n.Type = Str
+	default:
+		return false
+	}
+	n.Val = fmt.Sprint(val)
+	n.Kids = []*Node{} // not a list, so drop kids
+	return true
+}
+
 // Append adds kid at the end of the node's list of children.
 func (n *Node) Append(kid *Node) {
 	n.Kids = append(n.Kids, kid)
