@@ -29,9 +29,9 @@ List => {field=Type} {%d} {field=Kids} <<Node>>*
 Node => {field=Key} <id> ':' <Value>
 Node => <Value>
 Value => '{' <List> '}'
-Value => {field=Type} {%d} {field=Val} <num>
-Value => {field=Type} {%d} {field=Val} <bool>
-Value => {field=Type} {%d} {field=Val} <str>
+Value => {field=Type} {%d} {field=Content} <num>
+Value => {field=Type} {%d} {field=Content} <bool>
+Value => {field=Type} {%d} {field=Content} <str>
 
 num = /([-+]?\d*\.?\d+([eE][-+]?\d+)?)/
 bool = /(true|false)/
@@ -48,18 +48,36 @@ func init() {
 
 // Node holds a shor node and its children.
 type Node struct {
-	Key    string // id if keyed, empty if keyless, or "/" if root
-	Val    string // string representation of value, empty for list
-	Type   int    // str, num, bool, or list
-	Parent *Node  // nil if root node
-	Kids   []*Node
+	Key     string      // id if keyed, empty if keyless, or "/" if root
+	Content string      // string representation of value, empty for list
+	Value   interface{} // typed value, nil for list
+	Type    int         // Str, Num, Bool, or List
+	Parent  *Node       // nil if root node
+	Kids    []*Node     // empty if not list
 }
 
-// linkNodes updates parent links for entire tree.
-func (n *Node) linkNodes(par *Node) {
+// process converts content to typed value and updates parent/child links
+func (n *Node) process(par *Node) {
 	n.Parent = par
+	n.parseValue()
 	for i := range n.Kids {
-		n.Kids[i].linkNodes(n)
+		n.Kids[i].process(n)
+	}
+}
+
+// parseValue converts string content to typed value
+func (n *Node) parseValue() {
+	switch n.Type {
+	case Num:
+		if v, err := strconv.ParseFloat(n.Content, 64); err == nil {
+			n.Value = v
+		}
+	case Bool:
+		if v, err := strconv.ParseBool(n.Content); err == nil {
+			n.Value = v
+		}
+	case Str:
+		n.Value = n.Content
 	}
 }
 
@@ -68,22 +86,24 @@ func (n *Node) Get(val interface{}) bool {
 	switch n.Type {
 	case Num:
 		if p, ok := val.(*float64); ok {
-			if v, err := strconv.ParseFloat(n.Val, 64); err == nil {
+			if v, ok := n.Value.(float64); ok {
 				*p = v
 				return true
 			}
 		}
 	case Bool:
 		if p, ok := val.(*bool); ok {
-			if v, err := strconv.ParseBool(n.Val); err == nil {
+			if v, ok := n.Value.(bool); ok {
 				*p = v
 				return true
 			}
 		}
 	case Str:
 		if p, ok := val.(*string); ok {
-			*p = n.Val
-			return true
+			if v, ok := n.Value.(string); ok {
+				*p = v
+				return true
+			}
 		}
 	}
 	return false
@@ -103,7 +123,8 @@ func (n *Node) Set(val interface{}) bool {
 	default:
 		return false
 	}
-	n.Val = fmt.Sprint(val)
+	n.Value = val
+	n.Content = fmt.Sprint(val)
 	n.Kids = []*Node{} // not a list, so drop kids
 	return true
 }
@@ -169,9 +190,9 @@ func (n *Node) Format(depth int, indent string) string {
 			s = "{" + listSep + s + ind + "}"
 		}
 	case Str:
-		s = strconv.Quote(n.Val)
+		s = strconv.Quote(n.Content)
 	default:
-		s = n.Val
+		s = n.Content
 	}
 	if n.Key != "" && !isRoot {
 		s = n.Key + ":" + keySep + s
@@ -195,6 +216,6 @@ func Parse(in io.Reader) (*Node, error) {
 	if err != nil {
 		return nil, err
 	}
-	tree.linkNodes(nil)
+	tree.process(nil)
 	return tree, nil
 }
