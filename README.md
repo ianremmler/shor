@@ -29,9 +29,9 @@ examples: { # End of line comments work, too.
 		nested: {neato:true woo:"hoo"}
 	}
 	matrix: {{1 0 0 0}
-		 {0 1 0 0}
-		 {0 0 0 0}
-		 {0 0 1 0}}
+	         {0 1 0 0}
+	         {0 0 0 0}
+	         {0 0 1 0}}
 }
 
 go-get-it: "go get github.com/ianremmler/shor/..."
