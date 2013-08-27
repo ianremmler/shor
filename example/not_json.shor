@@ -41,7 +41,7 @@ widget: {
 		width: 500
 		height: 500
 	}
-	image: { 
+	image: {
 		src: "Images/Sun.png"
 		name: "sun1"
 		hOffset: 250
@@ -61,7 +61,7 @@ widget: {
 }
 
 web-app: {
-	servlet: {	 
+	servlet: {
 		{
 			servlet-name: "cofaxCDS"
 			servlet-class: "org.cofax.cds.CDSServlet"
